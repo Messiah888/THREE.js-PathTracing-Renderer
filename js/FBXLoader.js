@@ -1828,7 +1828,6 @@ THREE.FBXLoader = ( function () {
 					endOfFace = true;
 
 				}
-				indexes.push(indexI++);
 
 				if(indexI>=3){
 					indexI=0;
@@ -1838,7 +1837,7 @@ THREE.FBXLoader = ( function () {
 				var weights = [];
 
 				facePositionIndexes.push( vertexIndex * 3, vertexIndex * 3 + 1, vertexIndex * 3 + 2 );
-
+				
 				if ( geoInfo.color ) {
 
 					var data = getData( polygonVertexIndex, polygonIndex, vertexIndex, geoInfo.color );
@@ -1970,6 +1969,26 @@ THREE.FBXLoader = ( function () {
 				}
 
 			} );
+			
+			
+			var addedVertex=[];
+			for(var i=0;i<buffers.vertex.length;i+=3){
+				var find = false;
+				for(var j=0;j<addedVertex.length;j+=3){
+					if(buffers.vertex[i] == addedVertex[j*3]
+						&& buffers.vertex[i + 1] == addedVertex[j + 1]
+						&& buffers.vertex[i + 2] == addedVertex[j + 2]
+						){
+							indexes.push(j/3);
+							find = true;
+							break;
+						}
+				}
+				if(!find){
+					addedVertex.push(buffers.vertex[i], buffers.vertex[i + 1], buffers.vertex[i + 2]);
+					indexes.push(indexes.length);
+				}
+			}
 			
 			buffers.indexes = indexes; 
 
